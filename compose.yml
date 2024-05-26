@@ -1,0 +1,41 @@
+version: "3.9"
+services:
+  postgresql:
+    image: postgres:alpine
+    env_file:
+      - ./psql/.pg-env
+    volumes:
+      - ./psql/pg_data:/var/lib/postgresql/data
+    expose:
+      - 5432
+    restart: always
+    networks:
+      - fastapi-network
+
+  fastapi:
+    build:
+      context: ./fastapi-app
+    command: ["python", "main.py"]
+    networks:
+      - fastapi-network
+    env_file:
+      - ./fastapi-app/.env
+    depends_on:
+      - postgresql
+    expose:
+      - 8000
+    restart: always
+  
+  nginx:
+    build:
+      context: ./nginx
+    networks:
+      - fastapi-network
+    depends_on:
+      - fastapi
+    ports:
+      - "80:80"
+    restart: always
+
+networks:
+  fastapi-network:
