@@ -15,10 +15,12 @@ async def lifespan(app: FastAPI):
     # shutdown
     await db_helper.dispose()
 
+
 main_app = FastAPI(
     default_response_class=ORJSONResponse,
     lifespan=lifespan,
 )
+
 
 main_app.add_middleware(
     CORSMiddleware,
@@ -27,6 +29,11 @@ main_app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@main_app.get("/healthcheck", include_in_schema=False)
+async def healthcheck() -> dict[str, str]:
+    return {"status": "ok"}
+
 
 main_app.include_router(api_router)
 
