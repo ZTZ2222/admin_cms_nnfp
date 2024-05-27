@@ -48,6 +48,12 @@ class AuthConfig(BaseModel):
     lifetime: int = 60 * 60 * 24 * 7
 
 
+class CeleryConfig(BaseModel):
+    timezone: str = 'Asia/Bishkek'
+    broker_url: str = "redis://redis:6379/0"
+    result_backend: str = "redis://redis:6379/0"
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=(".env.local", ".env"),
@@ -59,6 +65,7 @@ class Settings(BaseSettings):
     api: ApiPrefix = ApiPrefix()
     db: DatabaseConfig
     auth: AuthConfig = AuthConfig()
+    celery: CeleryConfig = CeleryConfig()
 
 
 settings = Settings()
