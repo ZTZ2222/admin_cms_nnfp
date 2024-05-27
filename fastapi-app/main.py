@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import ORJSONResponse
 
 from core.config import settings
-from api import router as api_router
+from api import router
 from core.models import db_helper
 
 
@@ -30,12 +30,13 @@ main_app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @main_app.get("/healthcheck", include_in_schema=False)
 async def healthcheck() -> dict[str, str]:
     return {"status": "ok"}
 
 
-main_app.include_router(api_router)
+main_app.include_router(router)
 
 
 if __name__ == "__main__":
