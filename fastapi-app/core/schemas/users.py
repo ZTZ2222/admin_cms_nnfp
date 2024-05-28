@@ -36,3 +36,12 @@ class UserRead(UserBase):
 
 class UserUpdate(UserBase):
     id: int
+
+
+class SuperuserCreate(UserCreateWithPassword):
+    is_active: bool = True
+    is_superuser: bool = True
+
+
+class SuperuserUpdate(SuperuserCreate):
+    id: int
