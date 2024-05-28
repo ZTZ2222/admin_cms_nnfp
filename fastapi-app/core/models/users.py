@@ -1,3 +1,4 @@
+from typing import Optional
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
@@ -12,11 +13,10 @@ from core.models.mixins import (
 
 
 class User(Base, PkIdIntMixin, TimestampMixin):
-    email: Mapped[str] = mapped_column(
-        unique=True, index=True, nullable=False)
-    name: Mapped[str] = mapped_column(nullable=True)
-    hashed_password: Mapped[str] = mapped_column(nullable=True)
+    email: Mapped[str] = mapped_column(unique=True, index=True)
+    name: Mapped[Optional[str]]
+    hashed_password: Mapped[Optional[str]]
     provider: Mapped[AuthProvider]
-    provider_id: Mapped[str] = mapped_column(index=True, nullable=True)
-    is_active: Mapped[bool] = mapped_column(default=False, nullable=False)
-    is_superuser: Mapped[bool] = mapped_column(default=False, nullable=False)
+    provider_id: Mapped[Optional[str]] = mapped_column(unique=True)
+    is_active: Mapped[bool] = mapped_column(default=False, server_default="false")
+    is_superuser: Mapped[bool] = mapped_column(default=False, server_default="false")
