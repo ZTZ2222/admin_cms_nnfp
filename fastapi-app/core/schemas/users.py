@@ -6,7 +6,7 @@ from core.schemas.auth import AuthProvider
 
 class UserBase(BaseModel):
     email: EmailStr
-    name: Optional[str]
+    name: Optional[str] = None
 
 
 class UserCreateWithPassword(UserBase):
