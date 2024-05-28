@@ -49,7 +49,7 @@ class AuthConfig(BaseModel):
 
 
 class CeleryConfig(BaseModel):
-    timezone: str = 'Asia/Bishkek'
+    timezone: str = "Asia/Bishkek"
     broker_url: str = "redis://redis:6379/0"
     result_backend: str = "redis://redis:6379/0"
 
