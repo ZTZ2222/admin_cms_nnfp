@@ -8,7 +8,7 @@ from core.models import db_helper, User
 from core.services.oauth2 import AuthService
 from utils.exceptions import InvalidCredentialsException
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 
 def hash_password(password: str) -> str:
