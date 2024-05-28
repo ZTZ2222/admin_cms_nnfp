@@ -4,8 +4,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.models import User
 from core.schemas import Token, UserCreateWithPassword, UserUpdate
-from core.security import hash_password, verify_password
 from core.services.oauth2 import AuthService
+from utils.security import hash_password, verify_password
 from utils.exceptions import InvalidCredentialsException
 
 
