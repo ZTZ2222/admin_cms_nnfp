@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.models import db_helper, User
 from core.schemas.users import UserRead
 from core.services.oauth2 import AuthService
-from utils.exceptions import InvalidCredentialsException
+from utils.exceptions import InvalidCredentialsException, UnauthorizedAccessException
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
@@ -35,7 +35,7 @@ async def get_current_active_user(
     current_user: UserRead = Depends(get_current_user),
 ) -> UserRead:
     if not current_user.is_active:
-        raise InvalidCredentialsException
+        raise UnauthorizedAccessException
     return current_user
 
 
@@ -43,5 +43,5 @@ async def get_current_admin_user(
     current_user: UserRead = Depends(get_current_user),
 ) -> UserRead:
     if not current_user.is_superuser:
-        raise InvalidCredentialsException
+        raise UnauthorizedAccessException
     return current_user
