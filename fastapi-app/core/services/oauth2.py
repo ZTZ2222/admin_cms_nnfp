@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import jwt
 
 from core.config import settings
@@ -15,7 +15,7 @@ class AuthService:
 
     @classmethod
     def create_access_token(cls, user: User) -> str:
-        now = datetime.now()
+        now = datetime.now(timezone.utc)
         expire = now + timedelta(seconds=cls.lifetime)
 
         to_encode = {
