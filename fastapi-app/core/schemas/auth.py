@@ -16,8 +16,9 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
-    sub: Optional[str] = None
-    exp: Optional[int] = None
-    iat: Optional[int] = None
-    provider: AuthProvider
-    name: str
+    sub: int
+    exp: int
+    iat: int
+    iss: str
+    is_active: bool
+    is_admin: bool
