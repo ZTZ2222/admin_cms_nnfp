@@ -30,7 +30,7 @@ class AuthService:
         return jwt.encode(to_encode, cls.private_key, cls.algorithm)
 
     @classmethod
-    def verify_access_token(cls, token: str) -> dict:
+    def verify_access_token(cls, token: str) -> TokenData:
         try:
             payload = jwt.decode(token, cls.public_key,
                                  algorithms=[cls.algorithm])
