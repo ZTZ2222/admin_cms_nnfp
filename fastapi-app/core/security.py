@@ -5,6 +5,7 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.models import db_helper, User
+from core.schemas.users import UserRead
 from core.services.oauth2 import AuthService
 from utils.exceptions import InvalidCredentialsException
 
@@ -27,9 +28,14 @@ async def get_current_user(
         Depends(db_helper.session_getter),
     ],
     token: str = Depends(oauth2_scheme),
-) -> User:
+) -> UserRead:
     token_data = AuthService.verify_access_token(token)
-    user_id = token_data.get("sub")
+
+    user_id = token_data.sub
     if user_id is None:
         raise InvalidCredentialsException
-    return session.get(User, user_id)
+
+    user = await session.get(User, user_id)
+    if user is None:
+        raise InvalidCredentialsException
+    return user
