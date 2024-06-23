@@ -8,7 +8,7 @@ export const TokenPayloadSchema = z
     iss: z.string(),
     username: z.string(),
     is_active: z.boolean(),
-    is_admin: z.boolean(),
+    is_superuser: z.boolean(),
   })
   .nullable();
 

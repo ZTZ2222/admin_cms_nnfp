@@ -59,7 +59,7 @@ export default async function middleware(request: NextRequest) {
       return NextResponse.redirect(signInUrl);
     }
 
-    if (tokenPayload.is_admin === false) {
+    if (tokenPayload.is_superuser === false) {
       return NextResponse.redirect(homeUrl);
     }
 
