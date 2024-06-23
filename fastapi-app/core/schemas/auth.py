@@ -22,4 +22,4 @@ class TokenData(BaseModel):
     iss: str
     username: str
     is_active: bool
-    is_admin: bool
+    is_superuser: bool

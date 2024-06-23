@@ -25,7 +25,7 @@ class AuthService:
             "iss": "fastapi-local322",
             "username": user.email,
             "is_active": user.is_active,
-            "is_admin": user.is_superuser,
+            "is_superuser": user.is_superuser,
         }
 
         return jwt.encode(to_encode, cls.private_key, cls.algorithm)
