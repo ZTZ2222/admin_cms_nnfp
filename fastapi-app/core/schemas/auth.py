@@ -20,5 +20,6 @@ class TokenData(BaseModel):
     exp: int
     iat: int
     iss: str
+    username: str
     is_active: bool
     is_admin: bool

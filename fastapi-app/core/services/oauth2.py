@@ -23,6 +23,7 @@ class AuthService:
             "exp": expire,
             "iat": now,
             "iss": "fastapi-local322",
+            "username": user.email,
             "is_active": user.is_active,
             "is_admin": user.is_superuser,
         }
@@ -32,8 +33,7 @@ class AuthService:
     @classmethod
     def verify_access_token(cls, token: str) -> TokenData:
         try:
-            payload = jwt.decode(token, cls.public_key,
-                                 algorithms=[cls.algorithm])
+            payload = jwt.decode(token, cls.public_key, algorithms=[cls.algorithm])
             return TokenData(**payload)
         except jwt.PyJWTError:
             raise InvalidCredentialsException
