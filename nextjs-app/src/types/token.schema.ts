@@ -1,5 +1,10 @@
 import { z } from "zod";
 
+export const TokenSchema = z.object({
+  access_token: z.string(),
+  token_type: z.string(),
+});
+
 export const TokenPayloadSchema = z
   .object({
     sub: z.string(),
@@ -12,4 +17,5 @@ export const TokenPayloadSchema = z
   })
   .nullable();
 
+export type zToken = z.infer<typeof TokenSchema>;
 export type zTokenPayload = z.infer<typeof TokenPayloadSchema>;
