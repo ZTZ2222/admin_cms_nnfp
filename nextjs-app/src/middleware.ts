@@ -1,74 +1,47 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextFetchEvent, NextRequest } from "next/server";
+import { NextRequestWithAuth, withAuth } from "next-auth/middleware";
+import createMiddleware from "next-intl/middleware";
+import { AllLocales, AppConfig } from "./lib/i18n";
+import { NextMiddlewareResult } from "next/dist/server/web/types";
 
-import NodeCache from "node-cache";
-import { jwtVerify } from "jose";
-
-import { i18nMiddleware } from "./lib/i18n";
-import { zTokenPayload } from "./types/token.schema";
-
-const tokenStore = new NodeCache({ stdTTL: 600 });
-const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-
-const protectedRoutes = [
-  /^\/dashboard(.*)/,
-  /^\/\w{2}\/dashboard(.*)/,
-  /^\/protected-example-route(.*)/,
-  /^\/\w{2}\/protected-example-route(.*)/,
-  /^\/admin(.*)/,
-  /^\/\w{2}\/admin(.*)/,
+const publicPages = [
+  "/",
+  "/login",
+  "/user-posts",
+  "/privacy-policy",
+  "/cookies-consent",
+  "/terms-of-use",
 ];
 
-const isProtectedRoute = (pathname: string) =>
-  protectedRoutes.some((route) => route.test(pathname));
+export const intlMiddleware = createMiddleware({
+  locales: AllLocales,
+  localePrefix: AppConfig.localePrefix,
+  defaultLocale: AppConfig.defaultLocale,
+});
 
-const verifyToken = async (token: string) => {
-  try {
-    const { payload } = await jwtVerify(token, secret);
-    return payload as zTokenPayload;
-  } catch (error) {
-    return null;
-  }
-};
+type AuthMiddleware = (
+  request: NextRequestWithAuth | NextRequest,
+  event?: NextFetchEvent,
+) => Promise<NextMiddlewareResult>;
 
-export default async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+const authMiddleware = withAuth((req) => intlMiddleware(req), {
+  callbacks: {
+    authorized: ({ token }) => !!token,
+  },
+  pages: { signIn: "/login" },
+}) as AuthMiddleware;
 
-  if (isProtectedRoute(pathname)) {
-    const locale = pathname.match(/^\/(\w{2})\//)?.[1] || "";
-    const signInUrl = new URL(`${locale}/sign-in`, request.url);
-    const homeUrl = new URL(`${locale}/`, request.url);
+export default function middleware(req: NextRequest) {
+  const publicPathRegex = new RegExp(
+    `^(/(${AllLocales.join("|")}))?(${publicPages.join("|")})?/?$`,
+    "i",
+  );
 
-    const token = request.cookies.get("token")?.value;
-
-    if (!token) {
-      return NextResponse.redirect(signInUrl);
-    }
-
-    let tokenPayload = tokenStore.get<zTokenPayload>(token);
-
-    if (!tokenPayload) {
-      tokenPayload = await verifyToken(token);
-      if (!tokenPayload) {
-        return NextResponse.redirect(signInUrl);
-      }
-
-      tokenStore.set(token, tokenPayload);
-    }
-
-    if (tokenPayload.exp < Math.floor(Date.now() / 1000)) {
-      return NextResponse.redirect(signInUrl);
-    }
-
-    if (tokenPayload.is_superuser === false) {
-      return NextResponse.redirect(homeUrl);
-    }
-
-    return NextResponse.next();
-  }
-
-  return i18nMiddleware(request);
+  return publicPathRegex.test(req.nextUrl.pathname)
+    ? intlMiddleware(req)
+    : authMiddleware(req);
 }
 
 export const config = {
-  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: ["/((?!api|_next|.*\\..*).*)"],
 };

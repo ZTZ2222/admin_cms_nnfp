@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { getRequestConfig } from "next-intl/server";
 import { LocalePrefix } from "next-intl/routing";
-import createMiddleware from "next-intl/middleware";
 
 const localePrefix: LocalePrefix = "as-needed";
 
@@ -43,9 +42,3 @@ export const getI18nPath = (url: string, locale: string) => {
 
   return `/${locale}${url}`;
 };
-
-export const i18nMiddleware = createMiddleware({
-  locales: AllLocales,
-  localePrefix: AppConfig.localePrefix,
-  defaultLocale: AppConfig.defaultLocale,
-});
