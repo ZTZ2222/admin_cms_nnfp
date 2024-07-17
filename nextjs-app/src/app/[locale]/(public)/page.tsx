@@ -4,9 +4,12 @@ import Link from "next/link";
 export default function Home() {
   return (
     <main className="grid min-h-screen w-full place-content-center">
-      <div>User ID: Undefined</div>
+      <div className="p-5">Home Page</div>
       <Button asChild variant="link" size="default">
-        <Link href="/auth/login">Go to login page</Link>
+        <Link href="/dashboard">Go to Dashboard</Link>
+      </Button>
+      <Button asChild variant="link" size="default">
+        <Link href="/login">Go to Login</Link>
       </Button>
     </main>
   );
