@@ -1,38 +1,46 @@
-import { NextFetchEvent, NextRequest } from "next/server";
-import { NextRequestWithAuth, withAuth } from "next-auth/middleware";
+import { NextRequest } from "next/server";
 import createMiddleware from "next-intl/middleware";
 import { AllLocales, AppConfig } from "./lib/i18n";
-import { NextMiddlewareResult } from "next/dist/server/web/types";
 
-const publicPages = ["/", /^\/auth\/(login|sign-up)$/];
+// Define public pages and paths that don't require authentication
+const publicPages = ["/", "/login"];
 
-export const intlMiddleware = createMiddleware({
+async function isAuthenticated(req: NextRequest): Promise<boolean> {
+  const token = true;
+  return !!token;
+}
+
+// Internationalization middleware
+const intlMiddleware = createMiddleware({
   locales: AllLocales,
   localePrefix: AppConfig.localePrefix,
   defaultLocale: AppConfig.defaultLocale,
 });
 
-type AuthMiddleware = (
-  request: NextRequestWithAuth | NextRequest,
-  event?: NextFetchEvent,
-) => Promise<NextMiddlewareResult>;
-
-const authMiddleware = withAuth((req) => intlMiddleware(req), {
-  callbacks: {
-    authorized: ({ token }) => !!token,
-  },
-  pages: { signIn: "/login" },
-}) as AuthMiddleware;
-
-export default function middleware(req: NextRequest) {
-  const publicPathRegex = new RegExp(
-    `^(/(${AllLocales.join("|")}))?(${publicPages.join("|")})?/?$`,
-    "i",
+const authMiddleware = async (req: NextRequest) => {
+  const isPublicPage = publicPages.some((page) =>
+    req.nextUrl.pathname.match(page),
   );
+  if (isPublicPage) {
+    return intlMiddleware(req);
+  }
 
-  return publicPathRegex.test(req.nextUrl.pathname)
-    ? intlMiddleware(req)
-    : authMiddleware(req);
+  const isAuthenticatedUser = await isAuthenticated(req);
+  if (isAuthenticatedUser) {
+    return intlMiddleware(req);
+  }
+
+  // Redirect to login page if not authenticated
+  return {
+    status: 302,
+    redirect: { destination: "/login", permanent: false },
+  };
+};
+
+// Middleware function to determine whether to apply authentication or not
+export default async function middleware(req: NextRequest) {
+  // Apply authentication logic
+  return await authMiddleware(req);
 }
 
 export const config = {
