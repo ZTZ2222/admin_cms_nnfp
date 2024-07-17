@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils";
 import { AllLocales } from "@/lib/i18n";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider, useMessages } from "next-intl";
-import { SessionProvider } from "next-auth/react";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -37,11 +36,9 @@ export default function RootLayout({
           fontSans.variable,
         )}
       >
-        <SessionProvider>
-          <NextIntlClientProvider messages={messages} locale={params.locale}>
-            {children}
-          </NextIntlClientProvider>
-        </SessionProvider>
+        <NextIntlClientProvider messages={messages} locale={params.locale}>
+          {children}
+        </NextIntlClientProvider>
       </body>
     </html>
   );
