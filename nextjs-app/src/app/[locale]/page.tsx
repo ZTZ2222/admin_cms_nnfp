@@ -6,7 +6,7 @@ export default function Home() {
     <main className="grid min-h-screen w-full place-content-center">
       <div>User ID: Undefined</div>
       <Button asChild variant="link" size="default">
-        <Link href="/sign-in">Go to login page</Link>
+        <Link href="/auth/login">Go to login page</Link>
       </Button>
     </main>
   );

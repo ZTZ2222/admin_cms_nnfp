@@ -4,14 +4,7 @@ import createMiddleware from "next-intl/middleware";
 import { AllLocales, AppConfig } from "./lib/i18n";
 import { NextMiddlewareResult } from "next/dist/server/web/types";
 
-const publicPages = [
-  "/",
-  "/login",
-  "/user-posts",
-  "/privacy-policy",
-  "/cookies-consent",
-  "/terms-of-use",
-];
+const publicPages = ["/", /^\/auth\/(login|sign-up)$/];
 
 export const intlMiddleware = createMiddleware({
   locales: AllLocales,

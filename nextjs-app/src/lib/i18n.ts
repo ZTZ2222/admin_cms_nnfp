@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getRequestConfig } from "next-intl/server";
 import { LocalePrefix } from "next-intl/routing";
+import { createSharedPathnamesNavigation } from "next-intl/navigation";
 
 const localePrefix: LocalePrefix = "as-needed";
 
@@ -42,3 +43,9 @@ export const getI18nPath = (url: string, locale: string) => {
 
   return `/${locale}${url}`;
 };
+
+export const { Link, usePathname, useRouter, redirect } =
+  createSharedPathnamesNavigation({
+    locales: AllLocales,
+    localePrefix: AppConfig.localePrefix,
+  });
